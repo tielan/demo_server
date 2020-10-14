@@ -114,4 +114,23 @@ function delFile(path) {
         fs.rmdirSync(path);
     }
 }
-module.exports = { copy, listFile,listDir, writeFile, delFile };
+function deleteFolderRecursive(url) {
+    var files = [];
+    if (fs.existsSync(url)) {
+        files = fs.readdirSync(url);
+        files.forEach(function (file, index) {
+            var curPath = path.join(url, file);
+            if (fs.statSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+
+            } else {
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(url);
+    } else {
+        console.log("给定的路径不存在，请给出正确的路径");
+    }
+}
+
+module.exports = { copy, listFile, listDir, writeFile, delFile };

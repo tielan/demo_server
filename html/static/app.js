@@ -16,9 +16,11 @@ class App extends React.Component {
         fetch('/message/list')
             .then(response => response.json())
             .catch(error => {
+                this.setState({ loading: false })
                 alert("获取列表失败" + JSON.stringify(error))
             })
             .then(response => {
+                this.setState({ loading: false })
                 this.setState({ listApp: response.data })
             });
     }
@@ -34,7 +36,6 @@ class App extends React.Component {
                 })
                 .then(response => {
                     this.listApp();
-                    this.setState({ loading: false })
                 });
         }
     }
@@ -42,6 +43,7 @@ class App extends React.Component {
         const file = e.target.files[0];
         console.log(file)
         if (file.type == 'application/x-zip-compressed') {
+            this.setState({ loading: true })
             var formData = new FormData();
             formData.append('file', file);
             fetch('/message/upload', {
@@ -50,10 +52,11 @@ class App extends React.Component {
             })
                 .then(response => response.json())
                 .catch(error => {
+                    this.setState({ loading: false })
                     alert("上传失败" + JSON.stringify(error))
                 })
                 .then(response => {
-                    alert("上传成功" + JSON.stringify(response))
+                    this.listApp();
                 });
         } else {
             alert("只能上传zip 格式文件")
@@ -89,6 +92,9 @@ class App extends React.Component {
                         <span></span>
                         <span></span>
                     </div></div> : null}
+                <div>
+            <span>{`备注：本系统未演示demo系统，上传 图片zip 按图片顺序点击播放，图片文件名不能有中文，压缩包不能包含文件夹`}</span>
+                </div>
             </div>
         );
     }
